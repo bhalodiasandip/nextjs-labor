@@ -1,0 +1,11 @@
+{   
+    "Global": {
+      "gujarati": "ગુજરાતી",
+      "english": "English"
+    },
+    "HomePage": {
+      "title": "Welcome to labor project",
+      "login_as_labor": "Login As a Labor",
+      "login_as_farmer": "Login As a Farmer"      
+    }
+  }

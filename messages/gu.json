@@ -1,0 +1,11 @@
+{    
+    "Global": {
+      "gujarati": "ગુજરાતી",
+      "english": "English"
+    },
+    "HomePage": {
+      "title": "મૂલી પ્રોજેક્ટ માં આપનુ સ્વાગત છે.",
+      "login_as_labor": "શ્રમિક તરીકે લોગીન કરો",
+      "login_as_farmer": "ખેડૂત તરીકે લોગીન કરો"
+    }
+  }
