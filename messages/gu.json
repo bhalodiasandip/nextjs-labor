@@ -1,11 +1,26 @@
-{    
-    "Global": {
-      "gujarati": "ગુજરાતી",
-      "english": "English"
-    },
-    "HomePage": {
-      "title": "મૂલી પ્રોજેક્ટ માં આપનુ સ્વાગત છે.",
-      "login_as_labor": "શ્રમિક તરીકે લોગીન કરો",
-      "login_as_farmer": "ખેડૂત તરીકે લોગીન કરો"
-    }
+{
+  "Global": {
+    "gujarati": "ગુજરાતી",
+    "english": "English",
+    "full_name": "પૂરું નામ",
+    "phone_number": "ફોન નંબર",
+    "password": "પાસવર્ડ",
+    "confirm_password": "પાસવર્ડ ફરીથી દાખલ કરો",
+    "application_title": "સત્વ રિસોર્સ મેનેજમેન્ટ આપનું સ્વાગત કરે છે.",
+    "login": "લોગીન કરો",
+    "create_new_account": "નવું ખાતું બનાવો",
+    "enter_password": "પાસવર્ડ દાખલ કરો",
+    "enter_phonenumber": "ફોન નંબર દાખલ કરો",
+    "enter_fullname": "નામ અને અટક દાખલ કરો",
+    "your_role": "શું તમે ખેડૂત છો કે શ્રમિક ?",
+    "farmer": "ખેડૂત",
+    "labor": "શ્રમિક ",
+    "submit": "સબમિટ કરો",
+    "village": "ગામ",
+    "gender": "જાતી",
+    "area": "રહેણાંક વિસ્તાર",
+    "rate": "ભાવ",
+    "male": "પુરુષ",
+    "female": "સ્ત્રી"
   }
+}

@@ -20,16 +20,13 @@ export default function LocaleSwitcherSelect() {
   }
 
   return (
-    <div className="fixed rounded-full shadow-xl shadow-gray-500/50 right-2 bottom-2 md:right-5 md:bottom-2">
-        <Dropdown label="" placement="top" renderTrigger={() => <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-          <GlobeAltIcon className="h-5 w-5" />
-        </div>}>
+    <div className="fixed shadow-xl shadow-gray-500/50 right-2 bottom-2 md:right-5 md:bottom-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+        <Dropdown label="" placement="top" renderTrigger={() => <span>
+          <GlobeAltIcon className="h-8 w-8" />
+        </span>}>
           <DropdownItem onClick={() => changeLocale("gu")}>{t('gujarati')}</DropdownItem>
           <DropdownItem onClick={() => changeLocale("en")}>{t('english')}</DropdownItem>        
-        </Dropdown>
-      
-        
-      
+        </Dropdown>                    
     </div>
   );
 }
