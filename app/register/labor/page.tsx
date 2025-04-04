@@ -35,19 +35,9 @@ export default function BasicInfoPage() {
             <form className="flex max-w-md flex-col gap-4">
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="village">{t("village")}</Label>
-                </div>
-                <Select id="village" required>
-                  <option>ભાયાવદર</option>
-                  <option>અરણી</option>
-                  <option>મોટી પાનેલી</option>
-                </Select>
-              </div>
-              <div>
-                <div className="mb-1 block">
                   <Label htmlFor="area">{t("area")}</Label>
                 </div>
-                <Select id="area" required>
+                <Select color="success" id="area" required>
                   <option>કાળીયાવાસ</option>
                   <option>જગબીડ</option>
                   <option>હોળીધાર</option>
@@ -64,7 +54,7 @@ export default function BasicInfoPage() {
                       className="mr-2"
                       color="success"
                     />
-                    <Label htmlFor="farmer">{t("male")}</Label>
+                    <Label htmlFor="male">{t("male")}</Label>
                   </div>
                   <div className="basis-20">
                     <Radio
@@ -74,9 +64,22 @@ export default function BasicInfoPage() {
                       className="mr-2"
                       color="success"
                     />
-                    <Label htmlFor="labor">{t("female")}</Label>
+                    <Label htmlFor="female">{t("female")}</Label>
                   </div>
                 </div>
+              </div>
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="rate">{t("rate")}</Label>
+                </div>
+                <TextInput
+                  id="rate"
+                  name="rate"
+                  type="number"
+                  placeholder={t("rate")}
+                  color="success"
+                  required
+                />
               </div>
               <Button type="submit" color="success">
                 {t("submit")}{" "}
