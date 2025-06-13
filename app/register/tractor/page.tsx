@@ -1,36 +1,35 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Label, ThemeProvider } from "flowbite-react";
 import farmTheme from "@/app/ui/farmTheme";
 import AcmeLogo from "@/app/ui/acme-logo";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import dynamic from "next/dynamic";
+
 import {
-  registerFarmer,
-  fetchAreasByVillage,
+  registerTractor,
   fetchVillages,
+  fetchSkills,
   Village,
-  Area,
+  Skill,
 } from "@/services/authService";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  createRegistrationFarmer,
-  RegistrationFarmerData,
-} from "@/schemas/registrationFarmer";
+  createRegistrationTractor,
+  RegistrationTractorData,
+} from "@/schemas/registrationTractor";
 
 const GroupedMultiSelect = dynamic(
   () => import("@/app/ui/GroupedMultiSelect"),
-  {
-    ssr: false,
-  }
+  { ssr: false }
 );
 
-export default function FarmerRegistrationPage() {
+export default function TractorRegistrationPage() {
   const t = useTranslations("Global");
   const router = useRouter();
 
@@ -39,43 +38,27 @@ export default function FarmerRegistrationPage() {
   );
 
   const [villages, setVillages] = useState<Village[]>([]);
-  const [areas, setAreas] = useState<Area[]>([]);
-  const [selectedVillages, setSelectedVillages] = useState<any[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const schema = createRegistrationFarmer(t);
+  const schema = createRegistrationTractor(t);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegistrationFarmerData>({
+  } = useForm<RegistrationTractorData>({
     resolver: zodResolver(schema),
   });
 
-  // Fetch all villages on mount
+  // Fetch villages and skills on mount
   useEffect(() => {
     fetchVillages().then(setVillages).catch(console.error);
+    fetchSkills("tractor").then(setSkills).catch(console.error); // fetch skills with skill_type='tractor'
   }, []);
 
-  // Fetch areas whenever villages change
-  useEffect(() => {
-    const villageIds = selectedVillages.map((v) => v.value);
-    if (villageIds.length === 0) return;
-
-    Promise.all(villageIds.map(fetchAreasByVillage))
-      .then((results) => {
-        const merged = results.flat();
-        const unique = Array.from(
-          new Map(merged.map((item) => [item.id, item])).values()
-        );
-        setAreas(unique);
-      })
-      .catch(console.error);
-  }, [selectedVillages]);
-
-  const onSubmit = async (data: RegistrationFarmerData) => {
+  const onSubmit = async (data: RegistrationTractorData) => {
     setApiError(null);
 
     if (!registrationData) {
@@ -85,13 +68,13 @@ export default function FarmerRegistrationPage() {
 
     try {
       setLoading(true);
-      await registerFarmer({
+      await registerTractor({
         full_name: registrationData.full_name,
         phone_number: registrationData.contact_number,
         password: registrationData.password,
-        role: "farmer",
+        role: "tractor",
         village_ids: data.village_ids,
-        area_ids: data.area_ids,
+        skill_ids: data.skill_ids,
       });
 
       router.push("/login");
@@ -107,18 +90,10 @@ export default function FarmerRegistrationPage() {
     value: v.id,
   }));
 
-  const areaOptions = selectedVillages.map((village) => {
-    const groupedAreas = areas.filter(
-      (area) => area.village === village.value // Ensure village match
-    );
-    return {
-      label: village.label,
-      options: groupedAreas.map((area) => ({
-        label: area.area_name,
-        value: area.id,
-      })),
-    };
-  });
+  const skillOptions = skills.map((s) => ({
+    label: s.skill_name,
+    value: s.id,
+  }));
 
   return (
     <ThemeProvider theme={farmTheme}>
@@ -136,6 +111,7 @@ export default function FarmerRegistrationPage() {
               onSubmit={handleSubmit(onSubmit)}
               noValidate
             >
+              {/* Village Multi-Select */}
               <div>
                 <Label htmlFor="village">{t("village")}</Label>
                 <Controller
@@ -143,16 +119,13 @@ export default function FarmerRegistrationPage() {
                   name="village_ids"
                   render={({ field }) => (
                     <GroupedMultiSelect
-                      instanceId="village-select"
                       options={villageOptions}
                       value={villageOptions.filter((opt) =>
                         field.value?.includes(opt.value)
                       )}
-                      onChange={(selected) => {
-                        const values = selected.map((s) => s.value);
-                        field.onChange(values);
-                        setSelectedVillages(selected);
-                      }}
+                      onChange={(selected) =>
+                        field.onChange(selected.map((s) => s.value))
+                      }
                       placeholder={t("select")}
                     />
                   )}
@@ -164,32 +137,28 @@ export default function FarmerRegistrationPage() {
                 )}
               </div>
 
+              {/* Skill Multi-Select */}
               <div>
-                <Label htmlFor="area">{t("area")}</Label>
-
+                <Label htmlFor="skill">{t("skill")}</Label>
                 <Controller
                   control={control}
-                  name="area_ids"
-                  render={({ field }) => {
-                    console.log("Area Options:", areaOptions); // Log area options for debugging
-                    return (
-                      <GroupedMultiSelect
-                        instanceId="area-select"
-                        options={areaOptions}
-                        value={areaOptions
-                          .flatMap((group) => group.options)
-                          .filter((opt) => field.value?.includes(opt.value))}
-                        onChange={(selected) =>
-                          field.onChange(selected.map((s) => s.value))
-                        }
-                        placeholder={t("select")}
-                      />
-                    );
-                  }}
+                  name="skill_ids"
+                  render={({ field }) => (
+                    <GroupedMultiSelect
+                      options={skillOptions}
+                      value={skillOptions.filter((opt) =>
+                        field.value?.includes(opt.value)
+                      )}
+                      onChange={(selected) =>
+                        field.onChange(selected.map((s) => s.value))
+                      }
+                      placeholder={t("select")}
+                    />
+                  )}
                 />
-                {errors.area_ids && (
+                {errors.skill_ids && (
                   <p className="text-red-500 text-sm">
-                    {errors.area_ids.message}
+                    {errors.skill_ids.message}
                   </p>
                 )}
               </div>

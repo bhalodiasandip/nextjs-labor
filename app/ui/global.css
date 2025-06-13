@@ -2,17 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type='number']::-webkit-outer-spin-button {
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.react-datepicker__close-icon {
+  background: none !important;
+  right: 10px !important; /* optional tweak */
+}
+
+/* Style the "×" inside the close icon */
+.react-datepicker__close-icon::after {
+  color: #6b7280 !important; /* Tailwind's gray-500 */
+  font-size: 20px !important;
+  font-weight: bold;
+  background: none !important;
+}
+
+/* Selected date background and text */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #0e9f6e !important; /* Tailwind green-600 */
+  color: white !important;
+}
+
+/* Hover effect on selected date */
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--keyboard-selected:hover {
+  background-color: #057a55 !important; /* Tailwind green-700 */
+}
+
+.input-field {
+  @apply w-full px-3 py-2 border rounded-lg border-gray-300 focus:border-green-300 bg-white placeholder:text-gray-500;
 }
