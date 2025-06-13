@@ -98,7 +98,8 @@
     "validation": {
       "min": "Check minimum value",
       "required": "This field is Required",
-      "one_payment_type_required": "Enter Minimum one Payment value"
+      "one_payment_type_required": "Enter Minimum one Payment value",
+      "labors_count_must_not_exceeds": "Labor count must not more then required labors"
     },
     "help": {
       "labor_payment_option": "Only give input on how you want to work. You can give multiple selection."

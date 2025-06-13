@@ -1,59 +1,62 @@
 import { z } from "zod";
 
+export type LaborBidFormValues = z.infer<ReturnType<typeof getLaborBidSchema>>;
+
+const optionalPayment = z.preprocess((val) => {
+  const num = Number(val);
+  return val === "" || val == null || isNaN(num) ? undefined : num;
+}, z.number().positive().optional());
+
 export const getLaborBidSchema = (t: any, requiredLabors: number) =>
   z
     .object({
-      per_day: z
-        .union([z.number().int().positive(), z.literal(undefined)])
-        .optional(),
-      lump_sump: z
-        .union([z.number().int().positive(), z.literal(undefined)])
-        .optional(),
-      per_weight: z
-        .union([z.number().int().positive(), z.literal(undefined)])
-        .optional(),
+      per_day: optionalPayment,
+      lump_sump: optionalPayment,
+      hourly: optionalPayment,
+      per_bigha: optionalPayment,
+      per_weight: optionalPayment,
 
-      male_labors: z
-        .union([z.number().int().min(0), z.literal(undefined)])
-        .optional(),
-      female_labors: z
-        .union([z.number().int().min(0), z.literal(undefined)])
-        .optional(),
+      male_labors: z.preprocess(
+        (val) => (val === "" || val == null ? undefined : Number(val)),
+        z
+          .number({ invalid_type_error: t("validation.required") })
+          .int()
+          .min(0, t("validation.required"))
+      ),
 
-      date: z.date({ required_error: t("validation.required") }),
+      female_labors: z.preprocess(
+        (val) => (val === "" || val == null ? undefined : Number(val)),
+        z
+          .number({ invalid_type_error: t("validation.required") })
+          .int()
+          .min(0, t("validation.required"))
+      ),
+
+      date: z.preprocess(
+        (val) =>
+          typeof val === "string" || val instanceof Date ? new Date(val) : val,
+        z.date({ required_error: t("validation.required") })
+      ),
+
       description: z.string().optional(),
     })
-    .superRefine((data, ctx) => {
-      // Payment type group validation
-      const paymentValues = [data.per_day, data.lump_sump, data.per_weight];
-      const filledPayments = paymentValues.filter((v) => v !== undefined);
-      if (filledPayments.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: t("validation.one_payment_type_required"),
-          path: ["payment_group"],
-        });
+    .refine(
+      (data) =>
+        data.per_day ||
+        data.lump_sump ||
+        data.hourly ||
+        data.per_bigha ||
+        data.per_weight,
+      {
+        message: t("validation.one_payment_type_required"),
+        path: ["per_day"],
       }
-
-      // Labor count group validation
-      const male = data.male_labors ?? 0;
-      const female = data.female_labors ?? 0;
-
-      if (male + female === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: t("validation.one_labor_required"),
-          path: ["labor_group"],
-        });
+    )
+    .refine(
+      (data) =>
+        (data.male_labors || 0) + (data.female_labors || 0) <= requiredLabors,
+      {
+        message: t("validation.labors_count_must_not_exceeds"),
+        path: ["male_labors"],
       }
-
-      if (male + female > requiredLabors) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: t("validation.labors_exceed"),
-          path: ["labor_group"],
-        });
-      }
-    });
-
-export type LaborBidFormValues = z.infer<ReturnType<typeof getLaborBidSchema>>;
+    );

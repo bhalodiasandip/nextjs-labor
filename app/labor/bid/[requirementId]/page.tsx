@@ -57,6 +57,7 @@ export default function LaborBidForm() {
       setLoading(false);
     }
   };
+
   const onError = (formErrors: any) => {
     const messages = Object.values(formErrors).map(
       (err: any) => err.message || "Invalid input"
@@ -103,11 +104,11 @@ export default function LaborBidForm() {
           type="number"
           color="success"
           icon={FaRupeeSign}
-          {...register(fieldName, { valueAsNumber: true })}
+          {...register(fieldName)}
         />
       </div>
       {errors[fieldName] && (
-        <p className="text-red-500">{errors[fieldName]?.message}</p>
+        <p className="text-red-500 text-sm">{errors[fieldName]?.message}</p>
       )}
     </div>
   );
@@ -145,23 +146,26 @@ export default function LaborBidForm() {
               <div>
                 <Label className="text-base font-medium text-gray-700">
                   {t("number_of_required_labors")}:
-                  <span className="ml-1 text-lg font-semibold text-gray-900">
+                  <span className="ml-2 text-lg font-semibold text-gray-900">
                     {requiredLabors}
                   </span>
                 </Label>
               </div>
 
+              {/* Male / Female labors */}
               <div className="flex flex-wrap gap-4">
                 <div className="w-64">
                   <Label htmlFor="male_labors">{t("lbl_male_labors")}</Label>
                   <TextInput
                     id="male_labors"
                     type="number"
-                    {...register("male_labors", { valueAsNumber: true })}
+                    {...register("male_labors")}
                     color="success"
                   />
                   {errors.male_labors && (
-                    <p className="text-red-500">{errors.male_labors.message}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.male_labors.message}
+                    </p>
                   )}
                 </div>
 
@@ -172,11 +176,11 @@ export default function LaborBidForm() {
                   <TextInput
                     id="female_labors"
                     type="number"
-                    {...register("female_labors", { valueAsNumber: true })}
+                    {...register("female_labors")}
                     color="success"
                   />
                   {errors.female_labors && (
-                    <p className="text-red-500">
+                    <p className="text-red-500 text-sm">
                       {errors.female_labors.message}
                     </p>
                   )}
@@ -185,26 +189,24 @@ export default function LaborBidForm() {
 
               {/* Availability Date */}
               <div>
-                <div className="relative">
-                  <Controller
-                    control={control}
-                    name="date"
-                    render={({ field }) => (
-                      <DatePicker
-                        selected={field.value}
-                        onChange={(date) => field.onChange(date)}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText={t("available_date")}
-                        className="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                      />
-                    )}
-                  />
-                  {errors.date && (
-                    <p className="text-red-500 mt-1 text-sm">
-                      {errors.date.message}
-                    </p>
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      selected={field.value}
+                      onChange={(date) => field.onChange(date)}
+                      dateFormat="dd/MM/yyyy"
+                      placeholderText={t("available_date")}
+                      className="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    />
                   )}
-                </div>
+                />
+                {errors.date && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.date.message}
+                  </p>
+                )}
               </div>
 
               {/* Description */}
